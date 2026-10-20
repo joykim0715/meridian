@@ -1,0 +1,8 @@
+{
+  "name": "sbhnews-agent",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@max1ab/rss-news": "1.0.1"
+  }
+}

@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SBHNews Daily Briefing</title>
+<style>
+  @font-face {
+    font-family: Pretendard;
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("fonts/Pretendard-Regular.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: Pretendard;
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url("fonts/Pretendard-SemiBold.woff2") format("woff2");
+  }
+  :root {
+    --bg: #0B1220;
+    --sidebar: #0A101C;
+    --card: #111C2E;
+    --elevated: #172438;
+    --hover: #1D2D43;
+    --ink: #F1F5F9;
+    --body: #94A3B8;
+    --muted: #64748B;
+    --line: #253449;
+    --accent: #3B82F6;
+    --cyan: #22D3EE;
+    --paper: #111C2E;
+    --up: #34D399;
+    --down: #FB7185;
+    --warn: #FBBF24;
+    --critical: #EF4444;
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --t-hover: 140ms;
+    --t-press: 180ms;
+    --t-panel: 220ms;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--ink);
+    color-scheme: dark;
+    font-family: Pretendard, "Segoe UI", "Malgun Gothic", sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    letter-spacing: -0.015em;
+    text-rendering: optimizeLegibility;
+  }
+  header {
+    flex: none;
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 20px 16px;
+    background: var(--sidebar);
+    color: var(--ink);
+    box-shadow: inset 0 -1px 0 var(--accent);
+  }
+  .brand { min-width: 0; }
+  .eyebrow {
+    margin: 0 0 6px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+  }
+  .eyebrow i {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    margin-right: 8px;
+    background: var(--accent);
+    border-radius: 1px;
+    vertical-align: 1px;
+  }
+  h1 {
+    margin: 0;
+    color: #fff;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.045em;
+    line-height: 1.15;
+  }
+  button {
+    flex: none;
+    margin-bottom: 2px;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    font: 600 13px/1 Pretendard, "Segoe UI", "Malgun Gothic", sans-serif;
+    padding: 9px 14px;
+    transition: background var(--t-hover) var(--ease), color var(--t-hover) var(--ease), border-color var(--t-hover) var(--ease);
+  }
+  button:hover,
+  button:focus-visible {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    outline: none;
+  }
+  #split {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  }
+  .pane {
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .pane-world { border-left: 1px solid var(--line); }
+  .pane-body {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+  }
+  .zone-label {
+    flex: none;
+    margin: 0;
+    padding: 7px 16px 6px;
+    background: var(--sidebar);
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+  }
+  .pane-finance .zone-label { box-shadow: inset 3px 0 0 var(--accent); }
+  .pane-world .zone-label { box-shadow: inset 3px 0 0 var(--warn); }
+  .basis {
+    margin: 0;
+    padding: 0 16px 10px;
+    background: var(--sidebar);
+    color: var(--body);
+    font-size: 12px;
+    line-height: 1.45;
+  }
+  #market:empty { display: none; }
+  #desk {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 8px 14px 10px;
+    background: transparent;
+    border-bottom: 1px solid var(--line);
+  }
+  #desk form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 6px;
+    margin: 0;
+    padding: 8px 10px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    transition: border-color var(--t-hover) var(--ease), background var(--t-hover) var(--ease);
+  }
+  #desk .desk-label {
+    width: 100%;
+    margin: 0 0 2px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  #desk label {
+    display: flex;
+    flex-direction: column;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+  }
+  #desk input, #desk select {
+    width: 76px;
+    margin-top: 2px;
+    padding: 5px 6px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--bg);
+    color: var(--ink);
+    font: 600 13px Pretendard, "Segoe UI", "Malgun Gothic", sans-serif;
+  }
+  #orderSymbol { width: 92px; }
+  #desk button {
+    padding: 8px 10px;
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  #desk button:hover,
+  #desk button:focus-visible {
+    background: #60a5fa;
+    border-color: #60a5fa;
+    color: #fff;
+  }
+  #desk input:focus,
+  #desk select:focus,
+  .board-filter:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+    border-color: var(--accent);
+  }
+  #deskResult {
+    grid-column: 1 / -1;
+    margin: 0;
+    min-height: 2.4em;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+  .outlook {
+    display: block;
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.35;
+  }
+  .outlook.continue { color: var(--cyan); }
+  #market {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 10px 14px 12px;
+    background: transparent;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero {
+    min-width: 0;
+    padding: 10px 10px 8px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    transition: background var(--t-hover) var(--ease), border-color var(--t-hover) var(--ease);
+  }
+  .hero:hover { background: var(--hover); border-color: #314864; }
+  .hero b {
+    display: block;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
+  .hero b i {
+    margin-left: 6px;
+    color: var(--muted);
+    font-style: normal;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .hero em {
+    display: block;
+    margin-top: 2px;
+    color: var(--muted);
+    font-style: normal;
+    font-size: 11px;
+    line-height: 1.3;
+  }
+  .hero strong {
+    display: block;
+    margin: 4px 0 0;
+    color: var(--ink);
+    font-size: 22px;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+  }
+  .hero .action {
+    margin: 6px 0 0;
+    color: var(--ink);
+    font-size: 12px;
+    line-height: 1.35;
+  }
+  .hero .delta { display: block; font-size: 13px; font-weight: 600; }
+  .delta.up { color: var(--up); }
+  .delta.down { color: var(--down); }
+  .delta.flat { color: var(--muted); }
+  .clock { grid-column: 1 / -1; margin: 0; }
+  .when, .hint, .clock {
+    display: block;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  .hint { margin-top: 2px; color: var(--body); }
+  .spark { width: 100%; height: 34px; margin-top: 4px; }
+  .chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 0 0 12px;
+  }
+  .chart-card {
+    min-width: 0;
+    padding: 8px 10px 6px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    transition: background var(--t-hover) var(--ease), border-color var(--t-hover) var(--ease);
+  }
+  .chart-card:hover { background: var(--hover); border-color: #314864; }
+  .chart-card b { display: block; font-size: 12px; }
+  .chart-card span { color: var(--muted); font-size: 11px; }
+  table.board {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 8px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    font-size: 12.5px;
+  }
+  table.board th, table.board td {
+    padding: 7px 8px;
+    text-align: left;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  table.board th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--elevated);
+    color: var(--muted);
+    font-weight: 600;
+    cursor: pointer;
+  }
+  table.board th:hover { color: var(--ink); }
+  table.board td:nth-child(2),
+  table.board td:nth-child(3) { text-align: right; font-variant-numeric: tabular-nums; }
+  table.board tbody tr { transition: background var(--t-hover) var(--ease); }
+  table.board tbody tr:hover { background: var(--hover); }
+  .pill {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: var(--elevated);
+    color: var(--body);
+    font-size: 11px;
+  }
+  .pill.current { background: rgba(34, 211, 238, 0.12); color: var(--cyan); }
+  .pill.late { background: rgba(251, 191, 36, 0.14); color: var(--warn); }
+  .pill.stale { background: rgba(251, 113, 133, 0.14); color: var(--down); }
+  main { display: block; }
+  .col {
+    min-width: 0;
+    padding: 16px 18px 8px;
+  }
+  #strategy { padding-bottom: 36px; }
+  .col-strategy {
+    background: transparent;
+    border-left: 0;
+  }
+  .col-strategy .panel-title:not(:first-child) {
+    margin-top: 28px;
+  }
+  .panel-title {
+    margin: 0 2px 10px;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1.2;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .meta-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    max-width: 100%;
+    padding: 7px 12px 8px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+  }
+  .meta-row span {
+    color: var(--muted);
+    font-size: 11.5px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .meta-row strong {
+    color: var(--ink);
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+  }
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 26px 2px 2px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+  }
+  h2::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 99px;
+    background: var(--accent);
+    flex: none;
+  }
+  .issue {
+    padding: 20px 2px 18px;
+    border-bottom: 1px solid var(--line);
+  }
+  .issue-head {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 14px;
+  }
+  .index {
+    flex: none;
+    width: 34px;
+    margin-top: 4px;
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+  h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.036em;
+    line-height: 1.32;
+  }
+  .field,
+  .stories,
+  .issue > .prose { margin-left: 46px; }
+  .field { margin-bottom: 13px; }
+  .field b {
+    display: block;
+    margin-bottom: 3px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+  .field p,
+  .prose,
+  .note {
+    margin: 0;
+    color: var(--body);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  .note {
+    margin: 4px 2px 8px;
+    padding: 0;
+    background: transparent;
+    border: 0;
+  }
+  .kicker {
+    margin: 4px 0 2px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+  }
+  a.story,
+  a.story:link,
+  a.story:visited {
+    display: block;
+    margin: 0 -8px;
+    padding: 9px 8px;
+    border-radius: 10px;
+    color: var(--ink);
+    text-decoration: none;
+    transition: background var(--t-hover) var(--ease), color var(--t-hover) var(--ease);
+  }
+  a.story em {
+    display: block;
+    color: var(--ink);
+    font-style: normal;
+    font-size: 14.5px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.45;
+    text-decoration: none;
+  }
+  a.story span {
+    display: block;
+    margin-top: 3px;
+    color: var(--cyan);
+    font-size: 11.5px;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 1.4;
+    word-break: break-all;
+  }
+  a.story:hover { background: var(--hover); }
+  a.story:hover em { color: var(--accent); }
+  .results { margin-top: 4px; }
+  .result {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: baseline;
+    padding: 11px 2px;
+    border-bottom: 1px solid var(--line);
+    font-size: 14px;
+  }
+  .result span { color: var(--muted); }
+  .result strong { font-weight: 600; letter-spacing: -0.02em; }
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-thumb {
+    background: #314864;
+    border: 2px solid var(--bg);
+    border-radius: 99px;
+  }
+  .range-bar {
+    flex: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px 0;
+  }
+  .range-bar span {
+    margin-right: 2px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+  }
+  .range-bar button {
+    margin: 0;
+    padding: 6px 9px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--card);
+    color: var(--body);
+  }
+  .range-bar button.is-active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .range-bar button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .range-bar button:disabled:hover,
+  .range-bar button:disabled:focus-visible {
+    background: var(--card);
+    border-color: var(--line);
+    color: var(--body);
+  }
+  .board-tools {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 8px;
+  }
+  .board-filter {
+    width: 180px;
+    padding: 6px 8px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--ink);
+    font: 600 12px Pretendard, "Segoe UI", "Malgun Gothic", sans-serif;
+  }
+  .board-empty { margin: 0 0 8px; }
+  .issue {
+    border-radius: 12px;
+    transition: background var(--t-panel) var(--ease), box-shadow var(--t-panel) var(--ease);
+  }
+  .issue.is-selected {
+    background: var(--elevated);
+    box-shadow: inset 3px 0 0 var(--accent);
+  }
+  #news .issue { cursor: pointer; }
+  #chartTip {
+    position: fixed;
+    z-index: 6;
+    max-width: 260px;
+    padding: 8px 10px;
+    background: var(--elevated);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--ink);
+    font-size: 12px;
+    line-height: 1.45;
+    pointer-events: none;
+  }
+  #chartTip b { display: block; color: var(--cyan); font-size: 11px; }
+  #chartTip span { display: block; }
+  #chartTip[hidden] { display: none; }
+  @media (max-width: 860px) {
+    body { overflow: auto; }
+    #split { display: block; }
+    .pane, .pane-body { overflow: visible; height: auto; }
+    .pane-world { border-left: 0; border-top: 1px solid var(--line); }
+    .chart-grid { grid-template-columns: 1fr; }
+    h1 { font-size: 20px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <p class="eyebrow"><i></i>SBH NEWS</p>
+    <h1 id="docTitle">Daily Briefing</h1>
+  </div>
+  <button type="button" onclick="window.close()">닫기</button>
+</header>
+<div id="split">
+<section class="pane pane-finance" id="financeZone">
+  <p class="zone-label">금융</p>
+  <div class="range-bar" id="rangeBar" role="toolbar" aria-label="차트 기간">
+    <span>차트 기간</span>
+    <button type="button" data-sessions="5">1주</button>
+    <button type="button" data-sessions="21" class="is-active" aria-pressed="true">1달</button>
+    <button type="button" data-sessions="60" aria-pressed="false">3달</button>
+    <button type="button" data-sessions="126" disabled title="이 창에는 최근 60거래일까지만 있습니다">6달</button>
+    <button type="button" data-sessions="252" disabled title="이 창에는 최근 60거래일까지만 있습니다">1년</button>
+  </div>
+  <div class="pane-body">
+  <section id="market"></section>
+<section id="desk">
+  <form id="holdForm">
+    <p class="desk-label">보유 주수</p>
+    <label>S&amp;P500<input id="hold-sp" type="number" min="0" step="1" inputmode="numeric" value="0"></label>
+    <label>QQQ<input id="hold-qqq" type="number" min="0" step="1" inputmode="numeric" value="0"></label>
+    <label>Vanguard<input id="hold-voo" type="number" min="0" step="1" inputmode="numeric" value="0"></label>
+    <label>TIGER<input id="hold-tiger" type="number" min="0" step="1" inputmode="numeric" value="0"></label>
+    <label>SCHD<input id="hold-schd" type="number" min="0" step="1" inputmode="numeric" value="0"></label>
+    <button type="submit">보유 기준 행동</button>
+  </form>
+  <form id="orderForm">
+    <p class="desk-label">새 주문 의견</p>
+    <label>종목<input id="orderSymbol" type="text" placeholder="코스피, 지수, 종목" autocomplete="off"></label>
+    <label>방향<select id="orderSide"><option value="buy">매수</option><option value="sell">매도</option></select></label>
+    <label>주수<input id="orderQty" type="number" min="1" step="1" inputmode="numeric" value="1"></label>
+    <button type="submit">의견 보기</button>
+  </form>
+  <p id="deskResult">주수를 입력하면 공식 지표 방향에 따른 행동이 여기 나온다. 주문은 나가지 않는다.</p>
+</section>
+<p class="basis">방향은 최근 20거래일 공식 수치다. S&amp;P500과 Vanguard는 Cboe VIX, QQQ와 SCHD는 FRED 미국 10년 금리, TIGER는 FRED 원·달러다. 코스피·코스닥·지수·그 밖 종목도 주문을 받는다. 그 종목 가격이 없으면 연결된 공식 지표로만 말한다. 주수 비율은 시세의 정답이 아니라 한 번에 넣지 않게 막는 속도 제한이다.</p>
+  </div>
+</section>
+<section class="pane pane-world">
+  <p class="zone-label">국제정세</p>
+  <div class="pane-body">
+<main>
+  <section class="col" id="news"></section>
+  <section class="col col-strategy" id="strategy"></section>
+</main>
+  </div>
+</section>
+</div>
+<div id="chartTip" hidden></div>
+<script>
+const SOURCE = __SOURCE__;
+const STRATEGY = __STRATEGY__;
+const FINANCE = __FINANCE__;
+const BOARD = JSON.parse(__BOARD__);
+const IMPACT = JSON.parse(__IMPACT__);
+const SPARKS = [];
+let chartSessions = 21;
+let boardFilter = "";
+let sortKey = "";
+let sortDir = 1;
+
+function strokeFor(direction) {
+  if (direction === "down") return "#FB7185";
+  if (direction === "up") return "#34D399";
+  return "#64748B";
+}
+
+function storedPoints(item) {
+  const rows = BOARD.rows || [];
+  const row = item.id
+    ? rows.find((entry) => entry.id === item.id)
+    : rows.find((entry) => entry.label === item.driverLabel);
+  if (row && row.points && row.points.length) return row.points;
+  return item.points || [];
+}
+
+function visiblePoints(item) {
+  return storedPoints(item)
+    .filter((point) => Number.isFinite(Number(point.value)))
+    .slice(-chartSessions);
+}
+
+function sparkline(item, outlookKind) {
+  const points = visiblePoints(item);
+  if (points.length < 2) return "";
+  const id = SPARKS.length;
+  const matched = (BOARD.rows || []).find((entry) => entry.label === item.driverLabel);
+  const source = item.id || (matched && matched.id) || item.driverLabel || item.label || "";
+  SPARKS.push({ points: points, source: source, label: item.name || item.label || "" });
+  const values = points.map((point) => Number(point.value));
+  const color = strokeFor(item.direction);
+  let projected = null;
+  if (outlookKind === "continue" && chartSessions >= 21) {
+    const prev = values[Math.max(0, values.length - 6)];
+    const steps = values.length - 1 - Math.max(0, values.length - 6);
+    projected = values[values.length - 1] + ((values[values.length - 1] - prev) / Math.max(1, steps)) * 4;
+  }
+  const sample = projected === null ? values : values.concat([projected]);
+  const min = Math.min.apply(null, sample);
+  const max = Math.max.apply(null, sample);
+  const span = max - min || 1;
+  const yOf = (value) => 32 - ((value - min) / span) * 28;
+  const coords = values.map((value, index) => ((index / (values.length - 1)) * 148).toFixed(1) + "," + yOf(value).toFixed(1)).join(" ");
+  let extra = '<line class="guide" x1="0" y1="2" x2="0" y2="34" stroke="#22D3EE" stroke-width="1" opacity="0"/>';
+  if (projected !== null) {
+    extra += '<line x1="148" y1="' + yOf(values[values.length - 1]).toFixed(1) + '" x2="186" y2="' + yOf(projected).toFixed(1) + '" stroke="' + color + '" stroke-width="1.5" stroke-dasharray="3 3"/>';
+  }
+  const grid = [8, 20, 32].map((y) => '<line x1="0" y1="' + y + '" x2="148" y2="' + y + '" stroke="#253449" stroke-width="1"/>').join("");
+  return '<svg class="spark" data-spark="' + id + '" viewBox="0 0 190 36" role="img" aria-label="' + escapeHtml((item.name || item.label || "지표") + " 추세") + '">' + grid + '<polyline fill="none" stroke="' + color + '" stroke-width="1.75" points="' + coords + '"/>' + extra + "</svg>";
+}
+
+function heroCard(item) {
+  return '<article class="hero"><b>' + escapeHtml(item.label) + '</b><strong>' + escapeHtml(item.valueLabel) + '</strong><span class="delta ' + escapeHtml(item.direction) + '">' + escapeHtml(item.changeLabel) + '</span>' + sparkline(item) + '<span class="when">' + escapeHtml(item.dateLabel) + ' · ' + escapeHtml(item.freshness) + '</span><span class="hint">' + escapeHtml(item.hint) + '</span></article>';
+}
+
+function pickCard(item) {
+  const aka = item.aka ? '<i>' + escapeHtml(item.aka) + '</i>' : '';
+  return '<article class="hero"><b>' + escapeHtml(item.name) + aka + '</b><em>' + escapeHtml(item.driverLabel) + ' · ' + escapeHtml(item.because) + '</em><strong>' + escapeHtml(item.valueLabel) + '</strong><span class="delta ' + escapeHtml(item.direction) + '">' + escapeHtml(item.trendLabel) + '</span>' + sparkline(item, item.outlookKind) + '<span class="outlook ' + escapeHtml(item.outlookKind || "") + '">' + escapeHtml(item.outlook || "") + '</span><p class="action">' + escapeHtml(item.action) + '</p></article>';
+}
+
+function renderMarket(board) {
+  const heroes = board && board.heroes ? board.heroes : [];
+  const picks = board && board.basket ? board.basket : [];
+  if (!heroes.length && !picks.length) return { strip: "", detail: "" };
+  const charts = (board.rows || []).filter((row) => !heroes.some((hero) => hero.id === row.id)).slice(0, 6);
+  const chartHtml = charts.map((item) => '<article class="chart-card"><b>' + escapeHtml(item.label) + '</b><span>' + escapeHtml(item.valueLabel) + ' · ' + escapeHtml(item.dateLabel) + '</span>' + sparkline(item) + '</article>').join("");
+  const tableRows = (board.rows || []).map((item) => {
+    const latest = item.points && item.points.length ? item.points[item.points.length - 1].value : "";
+    return '<tr data-label="' + escapeHtml(item.label) + '" data-value="' + escapeHtml(latest) + '" data-date="' + escapeHtml(item.date || "") + '"><td>' + escapeHtml(item.label) + '</td><td>' + escapeHtml(item.valueLabel) + '</td><td class="delta ' + escapeHtml(item.direction) + '">' + escapeHtml(item.changeLabel) + '</td><td>' + escapeHtml(item.dateLabel) + '</td><td><span class="pill ' + escapeHtml(item.freshnessKind) + '">' + escapeHtml(item.freshness) + '</span></td></tr>';
+  }).join("");
+  const missing = (board.missing || []).map((line) => '<p class="hint">' + escapeHtml(line) + '</p>').join("");
+  const strip = (picks.length ? picks.map(pickCard) : heroes.map(heroCard)).join("") + '<p class="clock">' + escapeHtml(board.clockNote || "") + '</p>';
+  return {
+    strip: strip,
+    detail: '<h2>지표 원본</h2><div class="chart-grid">' + chartHtml + '</div><div class="board-tools"><input class="board-filter" type="search" placeholder="항목 찾기" aria-label="항목 찾기"></div><table class="board"><thead><tr><th data-key="label">항목</th><th data-key="value">지금</th><th>직전보다</th><th data-key="date">기준일</th><th>이 날짜인 이유</th></tr></thead><tbody>' + tableRows + '</tbody></table><p class="hint board-empty" hidden>해당하는 항목이 없다.</p>' + missing,
+  };
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function formatInline(value, linkUrls) {
+  let text = escapeHtml(value);
+  text = text.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  if (linkUrls) {
+    text = text.replace(/(https?:\/\/[^\s<&]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+  }
+  return text;
+}
+
+function renderBriefing(source, panel) {
+  const lines = String(source).replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n");
+  const html = [];
+  const meta = [];
+  let mode = "pre";
+  let cardOpen = false;
+  let articlesOpen = false;
+  let resultsOpen = false;
+  let pendingTitle = "";
+
+  function closeResults() {
+    if (resultsOpen) {
+      html.push("</section>");
+      resultsOpen = false;
+    }
+  }
+
+  function closeArticles() {
+    if (pendingTitle) {
+      html.push('<p class="prose">' + formatInline(pendingTitle, true) + "</p>");
+      pendingTitle = "";
+    }
+    if (articlesOpen) {
+      html.push("</div>");
+      articlesOpen = false;
+    }
+  }
+
+  function closeCard() {
+    closeArticles();
+    closeResults();
+    if (cardOpen) {
+      html.push("</article>");
+      cardOpen = false;
+    }
+  }
+
+  for (let i = 0; i < lines.length; i += 1) {
+    const trimmed = lines[i].trim();
+    if (!trimmed) continue;
+    const isItem = trimmed.slice(0, 2) === "- ";
+    const itemText = isItem ? trimmed.slice(2) : trimmed;
+
+    if (trimmed.charAt(0) === "#" && trimmed.charAt(1) !== "#") {
+      closeCard();
+      const title = trimmed.replace(/^#\s*/, "");
+      if (panel) {
+        html.push('<p class="panel-title">' + formatInline(title, false) + "</p>");
+      } else {
+        document.getElementById("docTitle").textContent = title;
+        document.title = title;
+      }
+      continue;
+    }
+
+    if (trimmed.slice(0, 3) === "###") {
+      closeCard();
+      mode = "body";
+      const heading = trimmed.replace(/^###\s*/, "");
+      const match = heading.match(/^(\d+)\.\s*(.*)$/);
+      const num = match ? match[1] : "";
+      const name = match ? match[2] : heading;
+      html.push('<article class="issue"><div class="issue-head">');
+      if (num) html.push('<div class="index">' + escapeHtml(String(num).padStart(2, "0")) + "</div>");
+      html.push("<h3>" + formatInline(name, false) + "</h3></div>");
+      cardOpen = true;
+      continue;
+    }
+
+    if (trimmed.slice(0, 2) === "##") {
+      closeCard();
+      mode = "body";
+      html.push("<h2>" + formatInline(trimmed.replace(/^##\s*/, ""), false) + "</h2>");
+      continue;
+    }
+
+    if (cardOpen && isItem && itemText.replace(/:\s*$/, "") === "관련 기사") {
+      closeArticles();
+      html.push('<div class="stories"><div class="kicker">관련 기사</div>');
+      articlesOpen = true;
+      continue;
+    }
+
+    if (articlesOpen && isItem) {
+      if (/^https?:\/\//.test(itemText)) {
+        const href = escapeHtml(itemText);
+        if (pendingTitle) {
+          html.push('<a class="story" href="' + href + '" target="_blank" rel="noopener"><em>' + formatInline(pendingTitle, false) + "</em><span>" + href + "</span></a>");
+          pendingTitle = "";
+        } else {
+          html.push('<a class="story" href="' + href + '" target="_blank" rel="noopener"><span>' + href + "</span></a>");
+        }
+      } else {
+        if (pendingTitle) html.push('<p class="prose">' + formatInline(pendingTitle, true) + "</p>");
+        pendingTitle = itemText;
+      }
+      continue;
+    }
+
+    if (cardOpen && isItem) {
+      closeArticles();
+      const splitAt = itemText.indexOf(":");
+      if (splitAt > 0 && splitAt <= 40) {
+        html.push('<div class="field"><b>' + formatInline(itemText.slice(0, splitAt), false) + "</b><p>" + formatInline(itemText.slice(splitAt + 1).trim(), true) + "</p></div>");
+      } else {
+        html.push('<p class="prose">' + formatInline(itemText, true) + "</p>");
+      }
+      continue;
+    }
+
+    if (mode === "pre") {
+      const splitAt = itemText.indexOf(":");
+      if (splitAt > 0) {
+        meta.push('<div class="meta-row"><span>' + formatInline(itemText.slice(0, splitAt), false) + "</span><strong>" + formatInline(itemText.slice(splitAt + 1).trim(), true) + "</strong></div>");
+      } else {
+        meta.push('<div class="meta-row"><strong>' + formatInline(itemText, true) + "</strong></div>");
+      }
+      continue;
+    }
+
+    if (isItem) {
+      const splitAt = itemText.indexOf(":");
+      if (splitAt > 0 && splitAt <= 40) {
+        if (!resultsOpen) {
+          html.push('<section class="results">');
+          resultsOpen = true;
+        }
+        html.push('<div class="result"><span>' + formatInline(itemText.slice(0, splitAt), false) + "</span><strong>" + formatInline(itemText.slice(splitAt + 1).trim(), true) + "</strong></div>");
+      } else {
+        closeResults();
+        html.push('<p class="prose">' + formatInline(itemText, true) + "</p>");
+      }
+      continue;
+    }
+
+    closeResults();
+    html.push('<p class="note">' + formatInline(trimmed, true) + "</p>");
+  }
+
+  closeCard();
+  closeResults();
+  const metaHtml = meta.length ? '<section class="meta">' + meta.join("") + "</section>" : "";
+  if (panel && html[0] && html[0].indexOf("panel-title") !== -1) {
+    return html[0] + metaHtml + html.slice(1).join("");
+  }
+  return metaHtml + html.join("");
+}
+
+function renderWorld(impact) {
+  const issues = impact && impact.issues ? impact.issues : [];
+  const cards = issues.map((issue) => {
+    const effects = (issue.effects || []).map((line) => '<p class="note">' + escapeHtml(line) + "</p>").join("");
+    return '<article class="issue" data-title="' + escapeHtml(issue.title) + '"><h3>' + escapeHtml(issue.title) + '</h3><p class="prose">' + escapeHtml(issue.fact) + '</p><p class="hint">앞으로 볼 점: ' + escapeHtml(issue.watch) + "</p>" + effects + "</article>";
+  }).join("");
+  const empty = cards || '<p class="hint">오늘 국제정세 이슈가 없어 다섯 종목으로 연결할 사건이 없다.</p>';
+  return '<p class="panel-title">사건이 다섯 종목과 보유 행동에 닿는 경로</p>' + empty + '<p class="hint">' + escapeHtml((impact && impact.method) || "") + "</p>";
+}
+
+document.getElementById("news").innerHTML = renderBriefing(SOURCE, false);
+document.getElementById("strategy").innerHTML = renderWorld(IMPACT) + '<div id="marketDetail"></div>' + renderBriefing(STRATEGY, true);
+paintCharts();
+bindIssues();
+bindCharts();
+bindRange();
+
+const HOLDINGS = [
+  ["hold-sp", "S&P500"],
+  ["hold-qqq", "QQQ"],
+  ["hold-voo", "Vanguard"],
+  ["hold-tiger", "TIGER"],
+  ["hold-schd", "SCHD"],
+];
+__ADVICE_JS__
+
+function shareCount(value) {
+  const qty = Number(value);
+  if (!Number.isFinite(qty) || qty < 0 || Math.floor(qty) !== qty) return null;
+  return qty;
+}
+
+function showDesk(text) {
+  document.getElementById("deskResult").textContent = text;
+}
+
+function saveDesk() {
+  const payload = { orderSymbol: document.getElementById("orderSymbol").value, orderSide: document.getElementById("orderSide").value, orderQty: document.getElementById("orderQty").value };
+  HOLDINGS.forEach((pair) => { payload[pair[0]] = document.getElementById(pair[0]).value; });
+  try { localStorage.setItem("sbh-desk-v1", JSON.stringify(payload)); } catch (error) {}
+}
+
+function loadDesk() {
+  try {
+    const payload = JSON.parse(localStorage.getItem("sbh-desk-v1") || "{}");
+    HOLDINGS.forEach((pair) => {
+      if (payload[pair[0]] !== undefined) document.getElementById(pair[0]).value = payload[pair[0]];
+    });
+    if (payload.orderSymbol) document.getElementById("orderSymbol").value = payload.orderSymbol;
+    if (payload.orderSide) document.getElementById("orderSide").value = payload.orderSide;
+    if (payload.orderQty) document.getElementById("orderQty").value = payload.orderQty;
+  } catch (error) {}
+}
+
+document.getElementById("holdForm").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const rows = HOLDINGS.map((pair) => ({ name: pair[1], qty: shareCount(document.getElementById(pair[0]).value) }));
+  saveDesk();
+  showDesk(holdingReport(rows, BOARD, IMPACT.byName || {}));
+});
+
+document.getElementById("orderForm").addEventListener("submit", (event) => {
+  event.preventDefault();
+  saveDesk();
+  showDesk(orderOpinion(document.getElementById("orderSymbol").value, document.getElementById("orderSide").value, shareCount(document.getElementById("orderQty").value), BOARD, IMPACT.byName || {}));
+});
+
+loadDesk();
+
+function paintCharts() {
+  SPARKS.length = 0;
+  const market = renderMarket(BOARD);
+  document.getElementById("market").innerHTML = market.strip;
+  document.getElementById("marketDetail").innerHTML = market.detail || renderBriefing(FINANCE, true);
+  bindBoard();
+}
+
+function bindRange() {
+  document.getElementById("rangeBar").addEventListener("click", (event) => {
+    const button = event.target.closest("button[data-sessions]");
+    if (!button || button.disabled) return;
+    chartSessions = Number(button.dataset.sessions);
+    document.querySelectorAll("#rangeBar button[data-sessions]").forEach((item) => {
+      const on = item === button;
+      item.classList.toggle("is-active", on);
+      if (!item.disabled) item.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    paintCharts();
+  });
+}
+
+function applyFilter() {
+  const query = boardFilter.trim().toLowerCase();
+  let shown = 0;
+  document.querySelectorAll("table.board tbody tr").forEach((row) => {
+    const ok = !query || String(row.dataset.label || "").toLowerCase().includes(query);
+    row.hidden = !ok;
+    if (ok) shown += 1;
+  });
+  const empty = document.querySelector(".board-empty");
+  if (empty) empty.hidden = shown !== 0;
+}
+
+function orderRows() {
+  if (!sortKey) return;
+  const tbody = document.querySelector("table.board tbody");
+  if (!tbody) return;
+  const rows = Array.from(tbody.querySelectorAll("tr"));
+  rows.sort((a, b) => {
+    if (sortKey === "value") return (Number(a.dataset.value) - Number(b.dataset.value)) * sortDir;
+    return String(a.dataset[sortKey] || "").localeCompare(String(b.dataset[sortKey] || ""), "ko") * sortDir;
+  });
+  rows.forEach((row) => tbody.appendChild(row));
+  document.querySelectorAll("table.board th").forEach((cell) => cell.removeAttribute("aria-sort"));
+  const header = document.querySelector('table.board th[data-key="' + sortKey + '"]');
+  if (header) header.setAttribute("aria-sort", sortDir > 0 ? "ascending" : "descending");
+}
+
+function sortBoard(key) {
+  sortDir = sortKey === key ? -sortDir : 1;
+  sortKey = key;
+  orderRows();
+}
+
+function bindBoard() {
+  const input = document.querySelector(".board-filter");
+  if (input) {
+    input.value = boardFilter;
+    input.addEventListener("input", () => {
+      boardFilter = input.value;
+      applyFilter();
+    });
+  }
+  document.querySelectorAll("table.board th[data-key]").forEach((cell) => {
+    cell.tabIndex = 0;
+    cell.addEventListener("click", () => sortBoard(cell.dataset.key));
+    cell.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      sortBoard(cell.dataset.key);
+    });
+  });
+  if (sortKey) orderRows();
+  applyFilter();
+}
+
+function bindIssues() {
+  document.querySelectorAll("#news .issue, #strategy .issue").forEach((article) => {
+    const heading = article.querySelector("h3");
+    if (!heading) return;
+    if (!article.dataset.title) article.dataset.title = heading.textContent;
+    article.tabIndex = 0;
+    article.addEventListener("click", (event) => {
+      if (event.target.closest("a")) return;
+      selectIssue(article.dataset.title);
+    });
+    article.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      if (event.target.closest("a, input, button, select")) return;
+      event.preventDefault();
+      selectIssue(article.dataset.title);
+    });
+  });
+}
+
+function selectIssue(title) {
+  document.querySelectorAll(".issue.is-selected").forEach((article) => article.classList.remove("is-selected"));
+  let target = null;
+  document.querySelectorAll(".issue").forEach((article) => {
+    if (article.dataset.title !== title) return;
+    article.classList.add("is-selected");
+    if (!target && article.closest("#strategy")) target = article;
+  });
+  if (!target) return;
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  target.scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" });
+}
+
+function hideTip() {
+  const tip = document.getElementById("chartTip");
+  tip.hidden = true;
+  document.querySelectorAll(".spark .guide").forEach((line) => line.setAttribute("opacity", "0"));
+}
+
+function guideAt(svg, index, count) {
+  const line = svg.querySelector(".guide");
+  if (!line) return;
+  const x = count < 2 ? 0 : (index / (count - 1)) * 148;
+  line.setAttribute("x1", x.toFixed(1));
+  line.setAttribute("x2", x.toFixed(1));
+  line.setAttribute("opacity", "1");
+}
+
+function showSynced(meta, index, clientX, clientY) {
+  const point = meta.points[index];
+  const prev = meta.points[index - 1];
+  document.querySelectorAll(".spark").forEach((svg) => {
+    const other = SPARKS[Number(svg.dataset.spark)];
+    if (!other) return;
+    const found = other.points.findIndex((item) => item.date === point.date);
+    const line = svg.querySelector(".guide");
+    if (found < 0) {
+      if (line) line.setAttribute("opacity", "0");
+      return;
+    }
+    guideAt(svg, found, other.points.length);
+  });
+  let change = "비교할 앞 점이 없다";
+  if (prev) {
+    const delta = Number(point.value) - Number(prev.value);
+    const word = Math.abs(delta) < 1e-9 ? "같음" : delta > 0 ? "높음" : "낮음";
+    const pct = Math.abs(Number(prev.value)) > 1e-9 ? (delta / Math.abs(Number(prev.value))) * 100 : null;
+    change = "앞 점보다 " + Math.abs(delta).toFixed(2) + " " + word + (pct === null ? "" : " · 변화율 " + pct.toFixed(2) + "%");
+  }
+  const tip = document.getElementById("chartTip");
+  tip.innerHTML = "<b>" + escapeHtml(point.date) + "</b><span>" + escapeHtml(meta.label) + " " + Number(point.value).toFixed(2) + "</span><span>" + escapeHtml(change) + "</span><span>출처 " + escapeHtml(meta.source) + "</span>";
+  tip.hidden = false;
+  tip.style.left = Math.max(8, Math.min(clientX + 14, window.innerWidth - 270)) + "px";
+  tip.style.top = Math.max(8, Math.min(clientY + 16, window.innerHeight - 96)) + "px";
+}
+
+function bindCharts() {
+  document.addEventListener("mousemove", (event) => {
+    const svg = event.target.closest ? event.target.closest(".spark") : null;
+    if (!svg) {
+      hideTip();
+      return;
+    }
+    const meta = SPARKS[Number(svg.dataset.spark)];
+    if (!meta || meta.points.length < 2) return;
+    const rect = svg.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / Math.max(1, rect.width)) * 190;
+    const index = Math.max(0, Math.min(meta.points.length - 1, Math.round((x / 148) * (meta.points.length - 1))));
+    showSynced(meta, index, event.clientX, event.clientY);
+  });
+}
+</script>
+</body>
+</html>

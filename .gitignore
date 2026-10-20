@@ -1,0 +1,16 @@
+.env
+node_modules/
+finance/data/
+finance/output/
+__pycache__/
+*.pyc
+release/
+logs/
+briefings/
+runtime/briefing.hta
+runtime/task.xml
+runtime/pipeline.lock
+runtime/display.html
+runtime/*.json
+runtime/morning-day.txt
+runtime/patch1-backup/
