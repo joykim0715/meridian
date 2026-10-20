@@ -456,7 +456,7 @@ export function renderBriefing({ when, status, items, classified, consumed, rema
   const excluded = classified?.excluded ?? [];
   const includedCount = issues.reduce((sum, issue) => sum + issue.articles.length, 0);
   const lines = [
-    "# SBHNews Daily Briefing",
+    "# Meridian",
     "",
     `- 마지막 실행 시각: ${when.stamp}`,
     `- 마지막 실행 결과: ${status}`,
@@ -720,7 +720,7 @@ export async function attachStrategy() {
 export function renderUrgentBriefing({ when, classified }) {
   const issues = classified?.issues ?? [];
   const lines = [
-    "# SBHNews 긴급 이슈",
+    "# Meridian 긴급 이슈",
     "",
     `확인 시각: ${when.stamp}`,
     "",
@@ -1225,7 +1225,7 @@ function presentResult(finalCode) {
       return;
     }
     showBriefingWindow();
-    const toastTitle = briefingMode === "urgent" ? "SBHNews 긴급 이슈" : "SBHNews Daily Briefing";
+    const toastTitle = briefingMode === "urgent" ? "Meridian 긴급 이슈" : "Meridian";
     const toastBody = briefingMode === "urgent"
       ? `긴급 이슈 ${lastIssueCount}건`
       : appendSummary
@@ -1237,7 +1237,7 @@ function presentResult(finalCode) {
     return;
   }
   if (finalCode === 1 || finalCode === 2 || finalCode === 3) {
-    showToast("SBHNews 브리핑 생성 실패", `로그: ${path.join(LOG_DIR, "latest.log")}`);
+    showToast("Meridian 브리핑 생성 실패", `로그: ${path.join(LOG_DIR, "latest.log")}`);
   }
 }
 

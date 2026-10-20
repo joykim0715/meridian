@@ -4,7 +4,7 @@ $ErrorActionPreference = "Stop"
 
 $title = $env:SBHNEWS_TOAST_TITLE
 $body = $env:SBHNEWS_TOAST_BODY
-if ([string]::IsNullOrEmpty($title)) { $title = "SBHNews Daily Briefing" }
+if ([string]::IsNullOrEmpty($title)) { $title = "Meridian" }
 if ($null -eq $body) { $body = "" }
 
 $template = [Windows.UI.Notifications.ToastNotificationManager]::GetTemplateContent([Windows.UI.Notifications.ToastTemplateType]::ToastText02)

@@ -1,6 +1,6 @@
 param([switch]$Force)
 $ErrorActionPreference = "Stop"
-$taskName = "SBHNews Daily Briefing Gemini"
+$taskName = "Meridian"
 $existing = schtasks.exe /Query /TN $taskName 2>$null
 if ($LASTEXITCODE -eq 0 -and -not $Force) {
   throw "$taskName is already registered. Re-run with -Force to replace it."
@@ -19,7 +19,7 @@ $xml = @"
 <?xml version="1.0" encoding="UTF-16"?>
 <Task version="1.3" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
   <RegistrationInfo>
-    <Description>SBH News daily briefing via Gemini</Description>
+    <Description>Meridian daily briefing</Description>
     <URI>\$taskName</URI>
   </RegistrationInfo>
   <Settings>

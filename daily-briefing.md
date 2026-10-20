@@ -4,7 +4,7 @@
 
 ---
 
-# SBH News 일일 브리핑
+# Meridian
 
 피드: `https://www.sbhnews.com/feed.xml`
 

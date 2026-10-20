@@ -1,4 +1,6 @@
-# SBH News 일일 브리핑
+# Meridian
+
+금융과 국제정세를 한 창에 보는 하루 브리핑이다.
 
 `run-daily.cmd`가 한 번 실행되면 아래 순서로 끝난다.
 
@@ -16,7 +18,7 @@
 
 프로젝트 폴더에서 `run-daily.cmd`를 실행한다. 이 갈래는 Cursor CLI로 기사를 분류하고 전략 문장을 쓴다. 다른 PC에서는 그 폴더로 옮긴 뒤, Node, Python, Edge, Cursor CLI 로그인이 있어야 한다. 뉴스 수집 패키지는 그 폴더에서 `npm install` 한 번이면 된다. 매일 등록은 `runtime\register-task.ps1`이다. 이미 등록된 PC에서 이 스크립트를 실행하면 기존 예약을 바꾸지 않고 멈춘다. `runtime\task.xml`은 이 컴퓨터에 등록된 복사본이라 다른 PC에서 그대로 가져오지 않는다.
 
-Cursor 없이 쓰는 갈래는 `run-daily-gemini.cmd`다. 분류와 전략 문장만 Gemini 무료 구간으로 보내고, 뉴스 수집, 지표, 창, 검증은 같다. `.env`에 `GEMINI_API_KEY`를 넣는다. 키는 로그에 남기지 않는다. 매일 등록은 `runtime\register-task-gemini.ps1`이고, 작업 이름은 `SBHNews Daily Briefing Gemini`라 기존 Cursor 예약을 바꾸지 않는다. 이 PC에서는 그 스크립트를 실행하지 않는다.
+Cursor 없이 쓰는 갈래는 `run-daily-gemini.cmd`다. 분류와 전략 문장만 Gemini 무료 구간으로 보내고, 뉴스 수집, 지표, 창, 검증은 같다. `.env`에 `GEMINI_API_KEY`를 넣는다. 키는 로그에 남기지 않는다. 매일 등록은 `runtime\register-task-gemini.ps1`이고, 작업 이름은 `Meridian`이라 기존 Cursor 예약을 바꾸지 않는다. 이 PC에서는 그 스크립트를 실행하지 않는다.
 
 ## 프로그램으로 받기
 
