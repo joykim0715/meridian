@@ -1197,7 +1197,7 @@ export function writeBriefingPage() {
 export function showBriefingWindow() {
   const displayPath = writeBriefingPage();
   const edge = edgeExecutable();
-  const profile = path.join(process.env.LOCALAPPDATA || ROOT, "sbhnews-agent", "edge-profile");
+  const profile = path.join(process.env.LOCALAPPDATA || ROOT, "Meridian", "edge-profile");
   fs.mkdirSync(profile, { recursive: true });
   const fileUrl = "file:///" + displayPath.replaceAll("\\", "/") + "?t=" + Date.now();
   const args = `--user-data-dir=${profile} --app=${fileUrl} --window-size=1280,740 --window-position=36,24 --no-first-run --no-default-browser-check --disable-sync`;
